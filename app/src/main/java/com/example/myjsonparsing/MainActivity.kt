@@ -12,16 +12,18 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import com.example.myjsonparsing.BooksData.BookItem
 import com.example.myjsonparsing.ui.theme.MyJsonParsingTheme
+
+// TODO: NullPointerException??
+private val booksList = BooksData().readBooks(context = MainActivity(), "books.json")
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val booksData = BooksData()
-        val booksList = booksData.readBooks(this, "books.json")
         setContent {
             MyJsonParsingTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -53,3 +55,12 @@ fun PrintBooks(library: List<BookItem>, modifier: Modifier) {
 
 }
 
+@Preview(showBackground = true)
+@Composable
+fun PreviewPrintBooks() {
+    MyJsonParsingTheme {
+        PrintBooks(
+            library = booksList,
+            modifier = Modifier.padding())
+    }
+}
