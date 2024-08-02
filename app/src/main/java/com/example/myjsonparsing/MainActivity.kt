@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,18 +13,21 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import coil.compose.AsyncImage
+import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.example.myjsonparsing.BooksData.BookItem
 import com.example.myjsonparsing.ui.theme.MyJsonParsingTheme
 
-// TODO: NullPointerException??
-private val booksList = BooksData().readBooks(context = MainActivity(), "books.json")
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // OJO: si intento sacar estas funciones del contexto, la app se cuelga
+        val booksData = BooksData()
+        val booksList = booksData.readBooks(context = this, "books.json")
+
         setContent {
             MyJsonParsingTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -39,28 +43,28 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun PrintBooks(library: List<BookItem>, modifier: Modifier) {
+
     LazyColumn {
-        items(library) { bookItem ->
+        item{
             Text(
-                text = bookItem.book.title,
-                modifier = modifier
-            )
-            AsyncImage(
-                model = bookItem.book.cover,
-                contentDescription = "A book cover",
-                modifier = modifier
+                text = "TOTAL ELEMENTOS ${library.size}",
+                modifier = Modifier.padding(top = 28.dp)
             )
         }
-    }
+        items(library) { libro ->
+            Text(
+                text = libro.book.title,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+            // Consigo recuperar las URL:
+            println("URL: ${libro.book.cover}")
 
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewPrintBooks() {
-    MyJsonParsingTheme {
-        PrintBooks(
-            library = booksList,
-            modifier = Modifier.padding())
+            // TODO: no logro pintar la imagen... (aunque la app no se cuelga):
+            Image(
+                painter = rememberAsyncImagePainter(libro.book.cover),
+                contentDescription = null,
+                modifier = Modifier.padding(start = 8.dp)
+            )
+        }
     }
 }
