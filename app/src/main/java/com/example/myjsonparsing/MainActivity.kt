@@ -13,10 +13,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.example.myjsonparsing.BooksData.BookItem
 import com.example.myjsonparsing.ui.theme.MyJsonParsingTheme
+
 
 
 class MainActivity : ComponentActivity() {
@@ -56,12 +61,12 @@ fun PrintBooks(library: List<BookItem>, modifier: Modifier) {
                 text = libro.book.title,
                 modifier = Modifier.padding(top = 4.dp)
             )
-            // Consigo recuperar las URL:
-            println("URL: ${libro.book.cover}")
-
-            // TODO: no logro pintar la imagen... (aunque la app no se cuelga):
-            Image(
-                painter = rememberAsyncImagePainter(libro.book.cover),
+            // TODO: escalar las imagenes para que todas tengan el mismo tamaño
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data(libro.book.cover)
+                    .crossfade(true)
+                    .build(),
                 contentDescription = null,
                 modifier = Modifier.padding(start = 8.dp)
             )
