@@ -5,6 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,10 +24,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
@@ -58,22 +63,33 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun PrintBooks(library: List<BookItem>, modifier: Modifier) {
-    Text(
-        text = "${library.size} libros disponibles",
-        style = MaterialTheme.typography.headlineLarge,
-        modifier = Modifier
-            .padding(top = 28.dp)
-    )
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 140.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 60.dp)
-    ) {
-        items(library.size) { index ->
-            BookCard(bookRes = library[index])
+    Box(
+        modifier = Modifier.fillMaxSize(),
+    ){
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            Text(
+                text = "${library.size} libros disponibles",
+                style = MaterialTheme.typography.headlineLarge,
+                modifier = Modifier
+                    .padding(top = 28.dp)
+            )
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 140.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 14.dp)
+            ) {
+                items(library.size) { index ->
+                    BookCard(bookRes = library[index])
+                }
+            }
         }
     }
+
 }
 
 @Composable
