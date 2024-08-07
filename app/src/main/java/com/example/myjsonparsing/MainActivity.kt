@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,10 +17,17 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,7 +41,6 @@ import com.example.myjsonparsing.BooksData.BookItem
 import com.example.myjsonparsing.ui.theme.MyJsonParsingTheme
 
 
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +50,12 @@ class MainActivity : ComponentActivity() {
         val booksData = BooksData()
         val booksList = booksData.readBooks(context = this, "books.json")
 
-        setContent {
+        /*
+        val _genreFilter = booksList.map { it.book.genre }.distinct()
+        val _pagesFilter = booksList.map { it.book.pages }
+        */
+
+            setContent {
             MyJsonParsingTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     PrintBooks(
@@ -58,6 +70,13 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun PrintBooks(library: List<BookItem>, modifier: Modifier) {
+
+    val _genreFilter = library.map { it.book.genre }.distinct()
+    var selectedGenre by remember { mutableStateOf(_genreFilter.first()) }
+    val _pagesFilter = library.map { it.book.pages }
+    var genreFilter by remember { mutableStateOf(_genreFilter) }
+    var pagesFilter by remember { mutableStateOf(_pagesFilter) }
+
     Box(
         modifier = Modifier.fillMaxSize(),
     ){
@@ -86,7 +105,14 @@ fun PrintBooks(library: List<BookItem>, modifier: Modifier) {
                         modifier = Modifier
                             .fillMaxWidth(),
                         textAlign = TextAlign.Center
-                    )
+                    )/*
+                    BookFilter(
+                        current = selectedGenre,
+                        filters = pagesFilter, // Esto es <Int> y tiene que ser <String>
+                        onFilterClicked = {
+                            pagesFilter = it
+                        }
+                    )*/
                 }
                 Column(
                     modifier = Modifier
@@ -98,6 +124,12 @@ fun PrintBooks(library: List<BookItem>, modifier: Modifier) {
                             .fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
+                    BookFilter(
+                        current = selectedGenre,
+                        filters = genreFilter,
+                        onFilterClicked = {
+                            genreFilter = listOf(it)
+                        })
                 }
             }
             LazyVerticalGrid(
@@ -144,4 +176,35 @@ fun BookCard(bookRes: BookItem) {
     }
 }
 
-// TODO: Spinner
+@Composable
+fun BookFilter(
+    current: String,
+    filters: List<String>,
+    onFilterClicked: (String) -> Unit
+) {
+    var showDropdown by remember { mutableStateOf(false) }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .minimumInteractiveComponentSize()
+            .clickable { showDropdown = true }
+            .padding(8.dp)
+    ) {
+        Text(current)
+
+        DropdownMenu(
+            expanded = showDropdown,
+            onDismissRequest = { showDropdown = false }
+        ) {
+            filters.forEach { eachFilter ->
+                DropdownMenuItem(
+                    text = { Text(eachFilter) },
+                    onClick = {
+                        onFilterClicked(eachFilter)
+                        showDropdown = false
+                    }
+                )
+            }
+        }
+    }
+}
