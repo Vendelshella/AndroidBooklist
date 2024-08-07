@@ -50,12 +50,7 @@ class MainActivity : ComponentActivity() {
         val booksData = BooksData()
         val booksList = booksData.readBooks(context = this, "books.json")
 
-        /*
-        val _genreFilter = booksList.map { it.book.genre }.distinct()
-        val _pagesFilter = booksList.map { it.book.pages }
-        */
-
-            setContent {
+        setContent {
             MyJsonParsingTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     PrintBooks(
@@ -64,18 +59,19 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             }
-        }
+    }
     }
 }
 
 @Composable
 fun PrintBooks(library: List<BookItem>, modifier: Modifier) {
 
-    val _genreFilter = library.map { it.book.genre }.distinct()
-    var selectedGenre by remember { mutableStateOf(_genreFilter.first()) }
-    val _pagesFilter = library.map { it.book.pages }
-    var genreFilter by remember { mutableStateOf(_genreFilter) }
-    var pagesFilter by remember { mutableStateOf(_pagesFilter) }
+    //val _pagesFilter = library.map { it.book.pages }
+    //var pagesFilter by remember { mutableStateOf(_pagesFilter) }
+
+    val genreFilter = remember { library.map { it.book.genre }.distinct() }
+    var selectedGenre by remember { mutableStateOf(genreFilter.first()) }
+
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -128,7 +124,7 @@ fun PrintBooks(library: List<BookItem>, modifier: Modifier) {
                         current = selectedGenre,
                         filters = genreFilter,
                         onFilterClicked = {
-                            genreFilter = listOf(it)
+                            selectedGenre = it
                         })
                 }
             }
@@ -176,6 +172,7 @@ fun BookCard(bookRes: BookItem) {
     }
 }
 
+// TODO: implementar dentro del 'onClick' la lógica de volver a mostrar la lista de libros
 @Composable
 fun BookFilter(
     current: String,
@@ -190,7 +187,7 @@ fun BookFilter(
             .clickable { showDropdown = true }
             .padding(8.dp)
     ) {
-        Text(current)
+        Text(text = current)
 
         DropdownMenu(
             expanded = showDropdown,
