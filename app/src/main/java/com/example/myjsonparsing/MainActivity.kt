@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.myjsonparsing.BooksData.BookItem
@@ -131,6 +132,14 @@ fun BookCard(bookRes: BookItem) {
                 .padding(start = 2.dp)
                 .fillMaxWidth()
                 .aspectRatio(1.0f)
+        )
+        Text(
+            text = bookRes.book.title,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .padding(start = 2.dp)
+                .fillMaxWidth(),
+            fontSize = 12.sp
         )
     }
 }
