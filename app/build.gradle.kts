@@ -60,7 +60,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.gson) // Para manejo de ficheros .json
-    implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation(libs.coil.compose)
     implementation(libs.androidx.ui.android) // Para manejo de imagenes traidas de URL
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
