@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -26,10 +25,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,6 +45,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.myjsonparsing.BooksData.BookItem
 import com.example.myjsonparsing.ui.theme.MyJsonParsingTheme
+import kotlin.math.floor
 
 
 class MainActivity : ComponentActivity() {
@@ -72,8 +73,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun PrintBooks(library: List<BookItem>, modifier: Modifier) {
 
-    //val _pagesFilter = library.map { it.book.pages }
-    //var pagesFilter by remember { mutableStateOf(_pagesFilter) }
+    val pagesFilter = remember { library.map { it.book.pages} }.sorted()
+    var selectedPage by remember { mutableIntStateOf(pagesFilter.first()) }
 
     val genreFilter = remember { library.map { it.book.genre }.distinct() }
     var selectedGenre by remember { mutableStateOf(genreFilter.first()) }
@@ -108,14 +109,14 @@ fun PrintBooks(library: List<BookItem>, modifier: Modifier) {
                             .fillMaxWidth()
                             .padding(top = 16.dp),
                         textAlign = TextAlign.Center
-                    )/*
-                    BookFilter(
-                        current = selectedGenre,
-                        filters = pagesFilter, // Esto es <Int> y tiene que ser <String>
+                    )
+                    FilterByPages(
+                        current = selectedPage,
+                        filters = pagesFilter,
                         onFilterClicked = {
-                            pagesFilter = it
+                            selectedPage = it
                         }
-                    )*/
+                    )
                 }
                 Column(
                     modifier = Modifier
@@ -128,7 +129,7 @@ fun PrintBooks(library: List<BookItem>, modifier: Modifier) {
                             .padding(top = 16.dp),
                         textAlign = TextAlign.Center,
                     )
-                    BookFilter(
+                    FilterByGenre(
                         current = selectedGenre,
                         filters = genreFilter,
                         onFilterClicked = {
@@ -182,7 +183,7 @@ fun BookCard(bookRes: BookItem) {
 
 // TODO: implementar dentro del 'onClick' la lógica de volver a mostrar la lista de libros
 @Composable
-fun BookFilter(
+fun FilterByGenre(
     current: String,
     filters: List<String>,
     onFilterClicked: (String) -> Unit
@@ -208,8 +209,6 @@ fun BookFilter(
             }
             Text(text = current)
         }
-
-
         DropdownMenu(
             expanded = showDropdown,
             onDismissRequest = { showDropdown = false }
@@ -224,5 +223,32 @@ fun BookFilter(
                 )
             }
         }
+    }
+}
+// TODO: mejorar esto para que muestre solo los "Int" del rango, no toooooodos los numeros
+@Composable
+fun FilterByPages(
+    current: Int,
+    filters: List<Int>,
+    onFilterClicked: (Int) -> Unit
+){
+
+    var showDropdown by remember { mutableStateOf(false) }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .minimumInteractiveComponentSize()
+            .clickable { showDropdown = true }
+            .padding(8.dp)
+    ) {
+        var sliderPosition by remember { mutableIntStateOf(0) }
+        var customRange: ClosedFloatingPointRange<Float> = filters.first().toFloat()..filters.last().toFloat()
+        Text(text = sliderPosition.toString(), textAlign = TextAlign.Center)
+        Slider(
+            value = sliderPosition.toFloat(),
+            valueRange = customRange,
+            onValueChange = {sliderPosition = it.toInt() },
+            modifier = Modifier.padding(top = 16.dp),
+        )
     }
 }
