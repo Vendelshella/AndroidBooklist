@@ -1,9 +1,9 @@
 package com.example.myjsonparsing
 
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -24,7 +25,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -45,114 +45,248 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.myjsonparsing.BooksData.BookItem
 import com.example.myjsonparsing.ui.theme.MyJsonParsingTheme
-import kotlin.math.floor
-
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
 
-        // OJO: si intento sacar estas funciones del contexto, la app se cuelga
         val booksData = BooksData()
         val booksList = booksData.readBooks(context = this, "books.json")
 
         setContent {
             MyJsonParsingTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    PrintBooks(
-                        library = booksList,
-                        modifier = Modifier.padding(innerPadding)
-                    )
+
+                val pagesFilter = remember { booksList.map { it.book.pages }.sorted() }
+                var selectedPageNumber by remember { mutableIntStateOf(pagesFilter.first()) }
+
+                val genreFilter = remember { booksList.map { it.book.genre }.distinct() }
+                var selectedGenre by remember { mutableStateOf("") }
+                val filteredGenres = remember (selectedGenre) {
+                    if (selectedGenre.isEmpty()){
+                        booksList
+                    } else {
+                        booksList.filter { it.book.genre == selectedGenre }
+                    }
                 }
-            }
-    }
-    }
-}
 
-@Composable
-fun PrintBooks(library: List<BookItem>, modifier: Modifier) {
-
-    val pagesFilter = remember { library.map { it.book.pages} }.sorted()
-    var selectedPage by remember { mutableIntStateOf(pagesFilter.first()) }
-
-    val genreFilter = remember { library.map { it.book.genre }.distinct() }
-    var selectedGenre by remember { mutableStateOf(genreFilter.first()) }
-
-
-    Box(
-        modifier = Modifier.fillMaxSize(),
-    ){
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ){
-            Text(
-                text = "${library.size} libros disponibles",
-                style = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier
-                    .padding(top = 28.dp)
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth()
-            ){
-                Column(
-                    modifier = Modifier
-                        .weight(1f),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ){
-                    Text(
-                        text = "Filtrar por páginas",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp),
-                        textAlign = TextAlign.Center
-                    )
-                    FilterByPages(
-                        current = selectedPage,
-                        filters = pagesFilter,
-                        onFilterClicked = {
-                            selectedPage = it
-                        }
-                    )
-                }
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                ){
-                    Text(
-                        text = "Filtrar por género",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp),
-                        textAlign = TextAlign.Center,
-                    )
-                    FilterByGenre(
-                        current = selectedGenre,
-                        filters = genreFilter,
-                        onFilterClicked = {
-                            selectedGenre = it
-                        })
-                }
-            }
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 140.dp),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 14.dp)
-            ) {
-                items(library.size) { index ->
-                    BookCard(bookRes = library[index])
-                }
+                MakeGrid(
+                    books = filteredGenres,
+                    selectedGenre = selectedGenre,
+                    genresFilter = genreFilter,
+                    onGenreSelected = { selectedGenre = it },
+                    selectedPageNumber = selectedPageNumber,
+                    pagesFilter = pagesFilter,
+                    onPageSelected = { selectedPageNumber = it}
+                )
             }
         }
     }
 }
 
+/******************************************************************************
+ * MakeGrid(args) // TODO
+ *
+ * Pinta el grid principal de la UI y llama al resto de Composables
+ *
+ ******************************************************************************/
 @Composable
-fun BookCard(bookRes: BookItem) {
+fun MakeGrid(
+    books: List<BookItem>,
+    selectedGenre: String,
+    genresFilter: List<String>,
+    onGenreSelected: (String) -> Unit,
+    selectedPageNumber: Int,
+    pagesFilter: List<Int>,
+    onPageSelected: (Int) -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            ShowMainHeader(bookList = books)
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    ShowFilterPagesHeader("Filtrar por páginas")
+                    MakeSlider(filters = pagesFilter)
+                }
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){
+                    ShowFilterPagesHeader(title = "Filtrar por géneros")
+                    MakeDropdownMenu(
+                        current = selectedGenre,
+                        filters = genresFilter,
+                        onFilterClicked = onGenreSelected
+                    )
+                }
+            }
+            PrintBooks(bookList = books)
+        }
+    }
+}
+
+/******************************************************************************
+ * ShowMainHeader(List<BookItem>)
+ *
+ * Muestra un encabezado con el número de libros disponibles
+ *
+ ******************************************************************************/
+@Composable
+fun ShowMainHeader(bookList: List<BookItem>) {
+    Text(
+        text = "${bookList.size} libros disponibles",
+        style = MaterialTheme.typography.headlineLarge,
+        modifier = Modifier.padding(top = 8.dp)
+    )
+}
+
+/******************************************************************************
+ * ShowFilterHeader(String)
+ *
+ * Muestra el encabezado del filtrado
+ *
+ ******************************************************************************/
+@Composable
+fun ShowFilterPagesHeader(title: String){
+    Text(
+        text = title,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp),
+        textAlign = TextAlign.Center
+    )
+}
+
+/******************************************************************************
+ * MakeSlider(List<Int>) // TODO: filtro, afinar callback y rango numeros
+ *
+ * Implementa el Slider que filtra por páginas
+ *
+ ******************************************************************************/
+@Composable
+fun MakeSlider(filters:List<Int>) {
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .minimumInteractiveComponentSize()
+            .padding(8.dp)
+    ) {
+        var sliderPosition by remember { mutableIntStateOf(0) }
+        val customRange: ClosedFloatingPointRange<Float> = filters.first().toFloat()..filters.last().toFloat()
+        Text(text = sliderPosition.toString(), textAlign = TextAlign.Center)
+        Slider(
+            value = sliderPosition.toFloat(),
+            valueRange = customRange,
+            onValueChange = { sliderPosition = it.toInt() },
+            modifier = Modifier.padding(top = 16.dp)
+        )
+    }
+}
+
+/******************************************************************************
+ * MakeDropdownMenu(String, List<String>, (String) -> Unit)
+ *
+ * Implementa el DropdownMenu que filtra por géneros
+ *
+ ******************************************************************************/
+@Composable
+fun MakeDropdownMenu(
+    current: String,
+    filters: List<String>,
+    onFilterClicked: (String) -> Unit
+) {
+    var showDropDown by remember { mutableStateOf(false) }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .minimumInteractiveComponentSize()
+            .clickable { showDropDown = true }
+            .padding(8.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+                onClick = { showDropDown = true }
+            ) {
+                Icon(
+                    Icons.Default.KeyboardArrowDown,
+                    contentDescription = "Filter by genre"
+                )
+            }
+            Text (
+                text = current.ifEmpty { "Todos" },
+                modifier = Modifier
+                    .minimumInteractiveComponentSize()
+                    .clickable { showDropDown = true }
+            )
+            IconButton(
+                onClick = { onFilterClicked("") }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = null
+                )
+            }
+        }
+        DropdownMenu(
+            expanded = showDropDown,
+            onDismissRequest = { showDropDown = false }
+        ) {
+            filters.forEach { filter ->
+                DropdownMenuItem(
+                    text = { Text(filter) },
+                    onClick = {
+                        onFilterClicked(filter)
+                        showDropDown = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+/******************************************************************************
+ * PrintBooks(List<BookItem>)
+ *
+ * Implementa el LazyVerticalGrid que muestra los libros
+ *
+ ******************************************************************************/
+@Composable
+fun PrintBooks(bookList: List<BookItem>) {
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(minSize = 140.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 14.dp)
+    ) {
+        items(bookList.size) { index ->
+            PrintBookCard(books = bookList[index])
+        }
+    }
+}
+
+/******************************************************************************
+ * PrintBookCard(BookItem)
+ *
+ * Implementa un elemento Card que contiene la imagen y el titulo del libro
+ *
+ ******************************************************************************/
+@Composable
+fun PrintBookCard(books: BookItem) {
     Card (
         modifier = Modifier.padding(4.dp),
         colors = CardDefaults.cardColors(
@@ -161,7 +295,7 @@ fun BookCard(bookRes: BookItem) {
     ) {
         AsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current)
-                .data(bookRes.book.cover)
+                .data(books.book.cover)
                 .crossfade(true)
                 .build(),
             contentDescription = null,
@@ -171,84 +305,12 @@ fun BookCard(bookRes: BookItem) {
                 .aspectRatio(1.0f)
         )
         Text(
-            text = bookRes.book.title,
+            text = books.book.title,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(start = 2.dp)
                 .fillMaxWidth(),
             fontSize = 12.sp
-        )
-    }
-}
-
-// TODO: implementar dentro del 'onClick' la lógica de volver a mostrar la lista de libros
-@Composable
-fun FilterByGenre(
-    current: String,
-    filters: List<String>,
-    onFilterClicked: (String) -> Unit
-) {
-    var showDropdown by remember { mutableStateOf(false) }
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .minimumInteractiveComponentSize()
-            .clickable { showDropdown = true }
-            .padding(8.dp)
-    ) {
-        Row (
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            IconButton(
-                onClick = {showDropdown = true}
-            ) {
-                Icon(
-                    Icons.Default.KeyboardArrowDown,
-                    contentDescription = "Filter by genre"
-                )
-            }
-            Text(text = current)
-        }
-        DropdownMenu(
-            expanded = showDropdown,
-            onDismissRequest = { showDropdown = false }
-        ) {
-            filters.forEach { eachFilter ->
-                DropdownMenuItem(
-                    text = { Text(eachFilter) },
-                    onClick = {
-                        onFilterClicked(eachFilter)
-                        showDropdown = false
-                    }
-                )
-            }
-        }
-    }
-}
-// TODO: mejorar esto para que muestre solo los "Int" del rango, no toooooodos los numeros
-@Composable
-fun FilterByPages(
-    current: Int,
-    filters: List<Int>,
-    onFilterClicked: (Int) -> Unit
-){
-
-    var showDropdown by remember { mutableStateOf(false) }
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .minimumInteractiveComponentSize()
-            .clickable { showDropdown = true }
-            .padding(8.dp)
-    ) {
-        var sliderPosition by remember { mutableIntStateOf(0) }
-        var customRange: ClosedFloatingPointRange<Float> = filters.first().toFloat()..filters.last().toFloat()
-        Text(text = sliderPosition.toString(), textAlign = TextAlign.Center)
-        Slider(
-            value = sliderPosition.toFloat(),
-            valueRange = customRange,
-            onValueChange = {sliderPosition = it.toInt() },
-            modifier = Modifier.padding(top = 16.dp),
         )
     }
 }
