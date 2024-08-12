@@ -74,7 +74,7 @@ class MainActivity : ComponentActivity() {
                     selectedGenre = selectedGenre,
                     genresFilter = genreFilter,
                     onGenreSelected = { selectedGenre = it },
-                    selectedPageNumber = selectedPageNumber,
+                    selectedPage = selectedPageNumber,
                     pagesFilter = pagesFilter,
                     onPageSelected = { selectedPageNumber = it}
                 )
@@ -95,7 +95,7 @@ fun MakeGrid(
     selectedGenre: String,
     genresFilter: List<String>,
     onGenreSelected: (String) -> Unit,
-    selectedPageNumber: Int,
+    selectedPage: Int,
     pagesFilter: List<Int>,
     onPageSelected: (Int) -> Unit
 ) {
@@ -117,7 +117,10 @@ fun MakeGrid(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     ShowFilterPagesHeader("Filtrar por páginas")
-                    MakeSlider(filters = pagesFilter)
+                    MakeSlider(
+                        filters = pagesFilter,
+                        selectedPage = selectedPage,
+                        onPageSelected = onPageSelected)
                 }
                 Column(
                     modifier = Modifier.weight(1f),
@@ -126,9 +129,9 @@ fun MakeGrid(
                 ){
                     ShowFilterPagesHeader(title = "Filtrar por géneros")
                     MakeDropdownMenu(
-                        current = selectedGenre,
-                        filters = genresFilter,
-                        onFilterClicked = onGenreSelected
+                        currentGenre = selectedGenre,
+                        filterGenres = genresFilter,
+                        onGenresClicked = onGenreSelected
                     )
                 }
             }
@@ -176,7 +179,15 @@ fun ShowFilterPagesHeader(title: String){
  *
  ******************************************************************************/
 @Composable
-fun MakeSlider(filters:List<Int>) {
+fun MakeSlider(
+    filters:List<Int>,
+    selectedPage: Int,
+    onPageSelected: (Int) -> Unit) {
+
+    val firstValue = filters.first()
+    val lastValue = filters.last()
+    var sliderPosition by remember { mutableIntStateOf(firstValue) }
+    val customRange: ClosedFloatingPointRange<Float> = firstValue.toFloat()..lastValue.toFloat()
 
     Box(
         modifier = Modifier
@@ -184,8 +195,6 @@ fun MakeSlider(filters:List<Int>) {
             .minimumInteractiveComponentSize()
             .padding(8.dp)
     ) {
-        var sliderPosition by remember { mutableIntStateOf(0) }
-        val customRange: ClosedFloatingPointRange<Float> = filters.first().toFloat()..filters.last().toFloat()
         Text(text = sliderPosition.toString(), textAlign = TextAlign.Center)
         Slider(
             value = sliderPosition.toFloat(),
@@ -204,9 +213,9 @@ fun MakeSlider(filters:List<Int>) {
  ******************************************************************************/
 @Composable
 fun MakeDropdownMenu(
-    current: String,
-    filters: List<String>,
-    onFilterClicked: (String) -> Unit
+    currentGenre: String,
+    filterGenres: List<String>,
+    onGenresClicked: (String) -> Unit
 ) {
     var showDropDown by remember { mutableStateOf(false) }
     Box(
@@ -228,13 +237,13 @@ fun MakeDropdownMenu(
                 )
             }
             Text (
-                text = current.ifEmpty { "Todos" },
+                text = currentGenre.ifEmpty { "Todos" },
                 modifier = Modifier
                     .minimumInteractiveComponentSize()
                     .clickable { showDropDown = true }
             )
             IconButton(
-                onClick = { onFilterClicked("") }
+                onClick = { onGenresClicked("") }
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
@@ -246,11 +255,11 @@ fun MakeDropdownMenu(
             expanded = showDropDown,
             onDismissRequest = { showDropDown = false }
         ) {
-            filters.forEach { filter ->
+            filterGenres.forEach { filter ->
                 DropdownMenuItem(
                     text = { Text(filter) },
                     onClick = {
-                        onFilterClicked(filter)
+                        onGenresClicked(filter)
                         showDropDown = false
                     }
                 )
