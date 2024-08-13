@@ -29,9 +29,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisallowComposableCalls
-import androidx.compose.runtime.cache
-import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -66,19 +63,13 @@ class MainActivity : ComponentActivity() {
                 val genreFilter = remember { booksList.map { it.book.genre }.distinct() }
                 var selectedGenre by remember { mutableStateOf("") }
 
-                val firstFilteredBooks = remember (selectedGenre) {
-                    if (selectedGenre.isEmpty()){
-                        booksList
-                    } else {
-                        booksList.filter { it.book.genre == selectedGenre }
-                    }
-                }
-                val filteredBooks = remember (selectedPageNumber) {
-                    if (selectedPageNumber == pagesFilter.first()) {
-                        firstFilteredBooks
-                    } else {
-                        firstFilteredBooks.filter { it.book.pages <= selectedPageNumber }
-                    }
+                val filteredBooks = remember (selectedGenre, selectedPageNumber) {
+                    booksList.filter {
+                        if (selectedGenre.isEmpty())
+                            true
+                         else
+                             it.book.genre == selectedGenre
+                        }.filter { it.book.pages <= selectedPageNumber }
                 }
 
                 MakeGrid(
@@ -96,7 +87,7 @@ class MainActivity : ComponentActivity() {
 }
 
 /******************************************************************************
- * MakeGrid(args) // TODO
+ * MakeGrid(args...)
  *
  * Pinta el grid principal de la UI y llama al resto de Composables
  *
@@ -132,13 +123,14 @@ fun MakeGrid(
                     MakeSlider(
                         pagesToFilter = pagesFilter,
                         currentPage = selectedPage,
-                        onPageSelected = onPageSelected)
+                        onPageSelected = onPageSelected
+                    )
                 }
                 Column(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
-                ){
+                ) {
                     ShowFilterPagesHeader(title = "Filtrar por géneros")
                     MakeDropdownMenu(
                         currentGenre = selectedGenre,
@@ -185,7 +177,7 @@ fun ShowFilterPagesHeader(title: String){
 }
 
 /******************************************************************************
- * MakeSlider(List<Int>) // TODO: filtro, afinar callback y rango numeros
+ * MakeSlider(List<Int>)
  *
  * Implementa el Slider que filtra por páginas
  *
