@@ -66,12 +66,18 @@ class MainActivity : ComponentActivity() {
                 val genreFilter = remember { booksList.map { it.book.genre }.distinct() }
                 var selectedGenre by remember { mutableStateOf("") }
 
-                // TODO: mejorar esta logica, para que actúen ambos filtros a la vez
-                val filteredBooks = remember (selectedGenre, selectedPageNumber) {
-                    if ((selectedGenre.isEmpty() && selectedPageNumber == pagesFilter.last())){
+                val firstFilteredBooks = remember (selectedGenre) {
+                    if (selectedGenre.isEmpty()){
                         booksList
                     } else {
-                        booksList.filter { it.book.genre == selectedGenre || it.book.pages <= selectedPageNumber }
+                        booksList.filter { it.book.genre == selectedGenre }
+                    }
+                }
+                val filteredBooks = remember (selectedPageNumber) {
+                    if (selectedPageNumber == pagesFilter.first()) {
+                        firstFilteredBooks
+                    } else {
+                        firstFilteredBooks.filter { it.book.pages <= selectedPageNumber }
                     }
                 }
 
