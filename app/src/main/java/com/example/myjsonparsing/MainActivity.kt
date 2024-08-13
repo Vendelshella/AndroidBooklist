@@ -29,6 +29,9 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisallowComposableCalls
+import androidx.compose.runtime.cache
+import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +49,7 @@ import coil.request.ImageRequest
 import com.example.myjsonparsing.BooksData.BookItem
 import com.example.myjsonparsing.ui.theme.MyJsonParsingTheme
 
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,20 +61,22 @@ class MainActivity : ComponentActivity() {
             MyJsonParsingTheme {
 
                 val pagesFilter = remember { booksList.map { it.book.pages }.sorted() }
-                var selectedPageNumber by remember { mutableIntStateOf(pagesFilter.first()) }
+                var selectedPageNumber by remember { mutableIntStateOf(pagesFilter.last()) }
 
                 val genreFilter = remember { booksList.map { it.book.genre }.distinct() }
                 var selectedGenre by remember { mutableStateOf("") }
-                val filteredGenres = remember (selectedGenre) {
-                    if (selectedGenre.isEmpty()){
+
+                // TODO: mejorar esta logica, para que actúen ambos filtros a la vez
+                val filteredBooks = remember (selectedGenre, selectedPageNumber) {
+                    if ((selectedGenre.isEmpty() && selectedPageNumber == pagesFilter.last())){
                         booksList
                     } else {
-                        booksList.filter { it.book.genre == selectedGenre }
+                        booksList.filter { it.book.genre == selectedGenre || it.book.pages <= selectedPageNumber }
                     }
                 }
 
                 MakeGrid(
-                    books = filteredGenres,
+                    books = filteredBooks,
                     selectedGenre = selectedGenre,
                     genresFilter = genreFilter,
                     onGenreSelected = { selectedGenre = it },
@@ -118,8 +124,8 @@ fun MakeGrid(
                 ) {
                     ShowFilterPagesHeader("Filtrar por páginas")
                     MakeSlider(
-                        filters = pagesFilter,
-                        selectedPage = selectedPage,
+                        pagesToFilter = pagesFilter,
+                        currentPage = selectedPage,
                         onPageSelected = onPageSelected)
                 }
                 Column(
@@ -130,8 +136,8 @@ fun MakeGrid(
                     ShowFilterPagesHeader(title = "Filtrar por géneros")
                     MakeDropdownMenu(
                         currentGenre = selectedGenre,
-                        filterGenres = genresFilter,
-                        onGenresClicked = onGenreSelected
+                        genresToFilter = genresFilter,
+                        onGenreSelected = onGenreSelected
                     )
                 }
             }
@@ -180,13 +186,13 @@ fun ShowFilterPagesHeader(title: String){
  ******************************************************************************/
 @Composable
 fun MakeSlider(
-    filters:List<Int>,
-    selectedPage: Int,
+    currentPage: Int,
+    pagesToFilter:List<Int>,
     onPageSelected: (Int) -> Unit) {
 
-    val firstValue = filters.first()
-    val lastValue = filters.last()
-    var sliderPosition by remember { mutableIntStateOf(firstValue) }
+    val firstValue = pagesToFilter.first()
+    val lastValue = pagesToFilter.last()
+    var sliderPosition by remember { mutableIntStateOf(currentPage) }
     val customRange: ClosedFloatingPointRange<Float> = firstValue.toFloat()..lastValue.toFloat()
 
     Box(
@@ -199,10 +205,13 @@ fun MakeSlider(
         Slider(
             value = sliderPosition.toFloat(),
             valueRange = customRange,
-            onValueChange = { sliderPosition = it.toInt() },
+            onValueChange = {
+                sliderPosition = it.toInt()
+                onPageSelected(sliderPosition) },
             modifier = Modifier.padding(top = 16.dp)
         )
     }
+
 }
 
 /******************************************************************************
@@ -214,8 +223,8 @@ fun MakeSlider(
 @Composable
 fun MakeDropdownMenu(
     currentGenre: String,
-    filterGenres: List<String>,
-    onGenresClicked: (String) -> Unit
+    genresToFilter: List<String>,
+    onGenreSelected: (String) -> Unit
 ) {
     var showDropDown by remember { mutableStateOf(false) }
     Box(
@@ -243,7 +252,7 @@ fun MakeDropdownMenu(
                     .clickable { showDropDown = true }
             )
             IconButton(
-                onClick = { onGenresClicked("") }
+                onClick = { onGenreSelected("") }
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
@@ -255,11 +264,11 @@ fun MakeDropdownMenu(
             expanded = showDropDown,
             onDismissRequest = { showDropDown = false }
         ) {
-            filterGenres.forEach { filter ->
+            genresToFilter.forEach { filter ->
                 DropdownMenuItem(
                     text = { Text(filter) },
                     onClick = {
-                        onGenresClicked(filter)
+                        onGenreSelected(filter)
                         showDropDown = false
                     }
                 )
