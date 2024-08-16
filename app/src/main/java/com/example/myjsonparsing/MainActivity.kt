@@ -63,14 +63,11 @@ class MainActivity : ComponentActivity() {
                 val genreFilter = remember { booksList.map { it.book.genre }.distinct() }
                 var selectedGenre by remember { mutableStateOf("") }
 
-                val filteredBooks = remember (selectedGenre, selectedPageNumber) {
-                    booksList.filter {
-                        if (selectedGenre.isEmpty())
-                            true
-                         else
-                             it.book.genre == selectedGenre
-                        }.filter { it.book.pages <= selectedPageNumber }
-                }
+                val filteredBooks = filterBooks(
+                    books = booksList,
+                    genre = selectedGenre,
+                    page = selectedPageNumber
+                )
 
                 MakeGrid(
                     books = filteredBooks,
@@ -84,6 +81,25 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
+
+/******************************************************************************
+ * filterBooks(List<BookItem>, String, Int: List<BookItem>
+ *
+ * Realiza el filtrado doble de la lista para cuando la UI se actualice.
+ *
+ *****************************************************************************/
+@Composable
+fun filterBooks(books: List<BookItem>, genre: String, page: Int): List<BookItem> {
+    val filteredBooks = remember (genre, page) {
+        books.filter {
+            if (genre.isEmpty())
+                true
+            else
+                it.book.genre == genre
+        }.filter { it.book.pages <= page }
+    }
+    return filteredBooks
 }
 
 /******************************************************************************
