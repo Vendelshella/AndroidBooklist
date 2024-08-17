@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -88,7 +89,19 @@ fun MakeGrid(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ShowMainHeader(bookList = books)
+            Row {
+                ShowMainHeader(bookList = books)
+                IconButton (
+                    onClick = { navController.navigate(
+                        route = AppScreens.ReadingListScreen.route)}
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Menu,
+                        contentDescription = null
+                    )
+                }
+
+            }
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {

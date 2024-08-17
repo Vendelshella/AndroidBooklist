@@ -29,6 +29,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.myjsonparsing.BooksData.BookItem
 
+// TODO: crear la pantalla de detalle del libro. OJO: objeto persistente!!
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
