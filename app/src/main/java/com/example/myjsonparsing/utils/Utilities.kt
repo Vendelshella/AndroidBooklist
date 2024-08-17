@@ -41,6 +41,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.myjsonparsing.BooksData.BookItem
+import com.example.myjsonparsing.navigation.AppScreens
 
 
 /******************************************************************************
@@ -116,7 +117,10 @@ fun MakeGrid(
                     )
                 }
             }
-            PrintBooks(bookList = books)
+            PrintBooks(
+                bookList = books,
+                navController = navController
+            )
         }
     }
 }
@@ -259,7 +263,7 @@ fun MakeDropdownMenu(
  *
  ******************************************************************************/
 @Composable
-fun PrintBooks(bookList: List<BookItem>) {
+fun PrintBooks(bookList: List<BookItem>, navController: NavController) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 140.dp),
         modifier = Modifier
@@ -267,7 +271,7 @@ fun PrintBooks(bookList: List<BookItem>) {
             .padding(top = 14.dp)
     ) {
         items(bookList.size) { index ->
-            PrintBookCard(books = bookList[index])
+            PrintBookCard(books = bookList[index], navController = navController)
         }
     }
 }
@@ -279,12 +283,13 @@ fun PrintBooks(bookList: List<BookItem>) {
  *
  ******************************************************************************/
 @Composable
-fun PrintBookCard(books: BookItem) {
+fun PrintBookCard(books: BookItem, navController: NavController) {
     Card (
         modifier = Modifier.padding(4.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
-        )
+        ),
+        onClick = { navController.navigate(route = AppScreens.BookDetailScreen.route) }
     ) {
         AsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current)

@@ -59,7 +59,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation("androidx.navigation:navigation-compose:2.7.6") // Para la navegacion
+    implementation("androidx.navigation:navigation-compose:2.7.7") // Para la navegacion
     implementation(libs.gson) // Para manejo de ficheros .json
     implementation(libs.coil.compose)
     implementation(libs.androidx.ui.android) // Para manejo de imagenes traidas de URL

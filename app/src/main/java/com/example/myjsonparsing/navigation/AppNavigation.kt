@@ -16,12 +16,12 @@ fun Navigation() {
             composable(route = AppScreens.MainScreen.route) {
                 MainScreen(navController)
             }
-            composable(route = AppScreens.BookDetailScreen.route) {
+            composable(AppScreens.BookDetailScreen.route) {
                 BookDetailScreen(navController) {
                     navController.popBackStack()
                 }
             }
-            composable(route = AppScreens.ReadingListScreen.route) {
+            composable(AppScreens.ReadingListScreen.route) {
 //                ReadingListScreen(navController) {
 //                    navController.popBackStack()
 //                }
