@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.myjsonparsing.screens.BookDetailScreen
 import com.example.myjsonparsing.screens.MainScreen
 
 @Composable
@@ -16,10 +17,15 @@ fun Navigation() {
                 MainScreen(navController)
             }
             composable(route = AppScreens.BookDetailScreen.route) {
-                // BookDetailScreen(navController)
+                BookDetailScreen(navController) {
+                    navController.popBackStack()
+                }
             }
             composable(route = AppScreens.ReadingListScreen.route) {
-                // ReadingListScreen(navController)
+//                ReadingListScreen(navController) {
+//                    navController.popBackStack()
+//                }
+
             }
     }
 }
