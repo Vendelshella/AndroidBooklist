@@ -1,5 +1,7 @@
 package com.example.androidbooklist.data
 
+// TODO: ¿se puede escribir esta clase de forma más simple?
+
 class BooksData {
 
     data class Library(
@@ -17,7 +19,7 @@ class BooksData {
         val cover: String,
         val synopsis: String,
         val year: Int,
-        val isbn: String,
+        val ISBN: String,
         val author: Author
     )
 
@@ -25,5 +27,4 @@ class BooksData {
         val name: String,
         val otherBooks: List<String>
     )
-
 }

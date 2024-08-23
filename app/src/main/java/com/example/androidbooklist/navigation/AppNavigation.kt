@@ -24,7 +24,7 @@ fun Navigation() {
                 arguments = listOf(navArgument("isbn") {type = NavType.StringType})
             ) { backStackEntry ->
                 val isbn = backStackEntry.arguments?.getString("isbn")
-                BookDetailScreen(isbn, navController) {
+                BookDetailScreen(isbn.toString(), navController) {
                     navController.popBackStack()
                 }
             }

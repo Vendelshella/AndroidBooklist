@@ -1,7 +1,7 @@
 package com.example.androidbooklist.screens
 
 import android.annotation.SuppressLint
-import androidx.compose.material3.ExperimentalMaterial3Api
+//import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -15,12 +15,11 @@ import com.example.androidbooklist.utils.filterBooks
 import com.example.androidbooklist.data.BooksDataSource
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+//@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen (navController: NavController) {
 
-    val booksDataSource = BooksDataSource()
-    val booksList = booksDataSource.readBooks(context = LocalContext.current)
+    val booksList = BooksDataSource.readBooks(context = LocalContext.current)
 
     val pagesFilter = remember { booksList.map { it.book.pages }.sorted() }
     var selectedPageNumber by remember { mutableIntStateOf(pagesFilter.last()) }

@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -91,16 +91,7 @@ fun MakeGrid(
         ) {
             Row {
                 ShowMainHeader(bookList = books)
-                IconButton (
-                    onClick = { navController.navigate(
-                        route = AppScreens.ReadingListScreen.route)}
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Menu,
-                        contentDescription = null
-                    )
-                }
-
+                ShowLibraryIcon(navController)
             }
             Row(
                 modifier = Modifier.fillMaxWidth()
@@ -135,6 +126,23 @@ fun MakeGrid(
                 navController = navController
             )
         }
+    }
+}
+
+@Composable
+private fun ShowLibraryIcon(navController: NavController) {
+    IconButton(
+        onClick = {
+            navController.navigate(
+                route = AppScreens.ReadingListScreen.route
+            )
+        }
+    ) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.List,
+            tint = MaterialTheme.colorScheme.primary,
+            contentDescription = null
+        )
     }
 }
 
@@ -302,7 +310,7 @@ fun PrintBookCard(books: BookItem, navController: NavController) {
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
         ),
-        onClick = { navController.navigate(route = "book_detail_screen/${books.book.isbn}") }
+        onClick = { navController.navigate(route = "book_detail_screen/${books.book.ISBN}") }
     ) {
         AsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current)
