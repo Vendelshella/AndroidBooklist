@@ -1,7 +1,4 @@
-package com.example.androidbooklist
-
-import android.content.Context
-import com.google.gson.Gson
+package com.example.androidbooklist.data
 
 class BooksData {
 
@@ -29,11 +26,4 @@ class BooksData {
         val otherBooks: List<String>
     )
 
-
-
-    fun readBooks(context: Context, fileName: String): List<BookItem> {
-        val jsonString = context.assets.open(fileName).bufferedReader().use { it.readText() }
-        val bookList = Gson().fromJson(jsonString, Library::class.java)
-        return bookList.library
-    }
 }

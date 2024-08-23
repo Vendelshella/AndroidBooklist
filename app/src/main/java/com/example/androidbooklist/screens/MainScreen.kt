@@ -12,15 +12,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.example.androidbooklist.utils.MakeGrid
 import com.example.androidbooklist.utils.filterBooks
-import com.example.androidbooklist.BooksData
+import com.example.androidbooklist.data.BooksDataSource
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen (navController: NavController) {
 
-    val booksData = BooksData()
-    val booksList = booksData.readBooks(context = LocalContext.current, "books.json")
+    val booksDataSource = BooksDataSource()
+    val booksList = booksDataSource.readBooks(context = LocalContext.current)
 
     val pagesFilter = remember { booksList.map { it.book.pages }.sorted() }
     var selectedPageNumber by remember { mutableIntStateOf(pagesFilter.last()) }

@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.androidbooklist.BooksData.BookItem
+import com.example.androidbooklist.data.BooksData.BookItem
 import com.example.androidbooklist.navigation.AppScreens
 
 

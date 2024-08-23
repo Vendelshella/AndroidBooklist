@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AndroidBooklist</string>
+    <string name="data_source">books.json</string>
 </resources>
