@@ -21,15 +21,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 
-// TODO: crear la pantalla de detalle del libro. OJO: objeto persistente!!
+// TODO: casca cuando le entra el isbn, ¿por qué?
+// TODO: llamar a getBook, y obtener el book que está en posicion [0] de la lista
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun BookDetailScreen(
+    isbn: String?,
     navController: NavController,
     navigateBack: () -> Unit
 ){
+    val myIsbn = if (isbn == null || isbn == "") "null" else isbn
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -39,7 +43,7 @@ fun BookDetailScreen(
                 ),
                 title = {
                     //Text(text = book.book.title)
-                    Text("Titulo del libro")
+                    Text("Titulo del libro, con ISBN: $myIsbn")
                 },
                 navigationIcon = {
                     IconButton(onClick = navigateBack) {

@@ -14,4 +14,10 @@ class BooksDataSource {
         val bookList = Gson().fromJson(jsonString, Library::class.java)
         return bookList.library
     }
+
+    fun getBook(context: Context, isbn: String): List<BookItem> {
+        val library = readBooks(context)
+        var book = library.filter { it.book.isbn == isbn }
+        return book
+    }
 }

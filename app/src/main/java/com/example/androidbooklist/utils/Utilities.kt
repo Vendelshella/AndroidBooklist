@@ -302,7 +302,7 @@ fun PrintBookCard(books: BookItem, navController: NavController) {
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
         ),
-        onClick = { navController.navigate(route = AppScreens.BookDetailScreen.route) }
+        onClick = { navController.navigate(route = "book_detail_screen/${books.book.isbn}") }
     ) {
         AsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current)
