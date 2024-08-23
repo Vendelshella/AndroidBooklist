@@ -1,4 +1,4 @@
-package com.example.myjsonparsing.ui.theme
+package com.example.androidbooklist.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

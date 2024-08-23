@@ -1,4 +1,4 @@
-package com.example.myjsonparsing
+package com.example.androidbooklist
 
 import android.content.Context
 import com.google.gson.Gson

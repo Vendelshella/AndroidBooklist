@@ -1,4 +1,4 @@
-package com.example.myjsonparsing.utils
+package com.example.androidbooklist.utils
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,8 +41,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.myjsonparsing.BooksData.BookItem
-import com.example.myjsonparsing.navigation.AppScreens
+import com.example.androidbooklist.BooksData.BookItem
+import com.example.androidbooklist.navigation.AppScreens
 
 
 /******************************************************************************

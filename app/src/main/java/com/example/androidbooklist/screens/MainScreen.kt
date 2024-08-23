@@ -1,4 +1,4 @@
-package com.example.myjsonparsing.screens
+package com.example.androidbooklist.screens
 
 import android.annotation.SuppressLint
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -10,9 +10,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
-import com.example.myjsonparsing.utils.MakeGrid
-import com.example.myjsonparsing.utils.filterBooks
-import com.example.myjsonparsing.BooksData
+import com.example.androidbooklist.utils.MakeGrid
+import com.example.androidbooklist.utils.filterBooks
+import com.example.androidbooklist.BooksData
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)

@@ -1,4 +1,4 @@
-package com.example.myjsonparsing.screens
+package com.example.androidbooklist.screens
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background

@@ -1,4 +1,4 @@
-package com.example.myjsonparsing
+package com.example.androidbooklist
 
 import org.junit.Test
 

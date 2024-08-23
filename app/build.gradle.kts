@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.myjsonparsing"
+    namespace = "com.example.androidbooklist"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.myjsonparsing"
+        applicationId = "com.example.androidbooklist"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

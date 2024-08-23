@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MyJsonParsing"
+rootProject.name = "AndroidBooklist"
 include(":app")
