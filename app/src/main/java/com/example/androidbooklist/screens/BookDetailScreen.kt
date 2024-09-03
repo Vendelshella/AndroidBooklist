@@ -22,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -34,6 +35,9 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.androidbooklist.data.BooksData
 import com.example.androidbooklist.data.BooksDataSource
+import com.example.androidbooklist.data.Library
+import com.example.androidbooklist.data.LibraryApp
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -72,6 +76,9 @@ fun BookDetailScreen(
 
 @Composable
 fun BodyBookDetail(navController: NavController, thisBook: BooksData.BookItem) {
+    // val libraryList = remember { mutableStateListOf<Library>() }
+
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -125,8 +132,16 @@ fun BodyBookDetail(navController: NavController, thisBook: BooksData.BookItem) {
                 Text(text = "Volver")
             }
             Spacer(modifier = Modifier.padding(start = 32.dp))
+
+            val lib = Library(
+                title = thisBook.book.title,
+                author = thisBook.book.author.name,
+                ISBN = thisBook.book.ISBN,
+                cover = thisBook.book.cover)
+            val app = LocalContext.current.applicationContext as LibraryApp
+            val scope = rememberCoroutineScope()
             Button(
-                onClick = { /*TODO: añadir a la lista de lectura*/ },
+                onClick = { scope.launch { app.db.libraryDao().insertLib(lib) } },
                 modifier = Modifier.background(MaterialTheme.colorScheme.primary)
             ) {
                Text(text = "Añadir a biblioteca")
@@ -134,3 +149,23 @@ fun BodyBookDetail(navController: NavController, thisBook: BooksData.BookItem) {
         }
     }
 }
+
+
+//
+//private fun loadItems() {
+//    lifecycleScope.launch {
+//        libraryList.clear()
+//        libraryList.addAll(libraryDao.getAllBooks())
+//    }
+//}
+
+
+
+//private fun deleteItem(user: User) {
+//    lifecycleScope.launch {
+//        libraryDao.delete(user)
+//        libraryList.remove(user)
+//    }
+//}
+
+
