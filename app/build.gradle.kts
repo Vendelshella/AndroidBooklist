@@ -72,6 +72,9 @@ dependencies {
     ksp("androidx.room:room-compiler:2.6.0")
     implementation("androidx.room:room-ktx:2.6.0")
 
+    // Corutinas
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
