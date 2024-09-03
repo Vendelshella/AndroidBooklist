@@ -9,5 +9,6 @@ data class Library(
     val id: Int = 0,
     val title: String,
     val author: String,
-    val ISBN: String
+    val ISBN: String,
+    val cover: String
 )
