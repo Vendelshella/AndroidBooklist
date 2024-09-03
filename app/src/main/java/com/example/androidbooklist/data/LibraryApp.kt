@@ -11,6 +11,7 @@ class LibraryApp : Application() {
         super.onCreate()
         db = Room
             .databaseBuilder(this, LibraryDatabase::class.java, "library_database")
+            .fallbackToDestructiveMigration()
             .build()
     }
 
