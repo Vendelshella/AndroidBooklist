@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Close
@@ -53,7 +54,7 @@ import com.example.androidbooklist.navigation.AppScreens
  *****************************************************************************/
 @Composable
 fun filterBooks(books: List<BookItem>, genre: String, page: Int): List<BookItem> {
-    val filteredBooks = remember (genre, page) {
+    val filteredBooks = remember(genre, page) {
         books.filter {
             if (genre.isEmpty())
                 true
@@ -168,7 +169,7 @@ fun ShowMainHeader(bookList: List<BookItem>) {
  *
  ******************************************************************************/
 @Composable
-fun ShowFilterPagesHeader(title: String){
+fun ShowFilterPagesHeader(title: String) {
     Text(
         text = title,
         modifier = Modifier
@@ -187,8 +188,9 @@ fun ShowFilterPagesHeader(title: String){
 @Composable
 fun MakeSlider(
     currentPage: Int,
-    pagesToFilter:List<Int>,
-    onPageSelected: (Int) -> Unit) {
+    pagesToFilter: List<Int>,
+    onPageSelected: (Int) -> Unit
+) {
 
     val firstValue = pagesToFilter.first()
     val lastValue = pagesToFilter.last()
@@ -207,7 +209,8 @@ fun MakeSlider(
             valueRange = customRange,
             onValueChange = {
                 sliderPosition = it.toInt()
-                onPageSelected(sliderPosition) },
+                onPageSelected(sliderPosition)
+            },
             modifier = Modifier.padding(top = 16.dp)
         )
     }
@@ -245,7 +248,7 @@ fun MakeDropdownMenu(
                     contentDescription = "Filter by genre"
                 )
             }
-            Text (
+            Text(
                 text = currentGenre.ifEmpty { "Todos" },
                 modifier = Modifier
                     .minimumInteractiveComponentSize()
@@ -291,8 +294,14 @@ fun PrintBooks(bookList: List<BookItem>, navController: NavController) {
             .fillMaxSize()
             .padding(top = 14.dp)
     ) {
-        items(bookList.size) { index ->
-            PrintBookCard(books = bookList[index], navController = navController)
+        items(bookList) {
+            PrintBookCard(
+                name =  it.book.title,
+                imageUrl = it.book.cover,
+                onClick = {
+                    navController.navigate(route = "book_detail_screen/${it.book.ISBN}")
+                }
+            )
         }
     }
 }
@@ -304,17 +313,17 @@ fun PrintBooks(bookList: List<BookItem>, navController: NavController) {
  *
  ******************************************************************************/
 @Composable
-fun PrintBookCard(books: BookItem, navController: NavController) {
-    Card (
+fun PrintBookCard(name: String, imageUrl: String, onClick: () -> Unit) {
+    Card(
         modifier = Modifier.padding(4.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
         ),
-        onClick = { navController.navigate(route = "book_detail_screen/${books.book.ISBN}") }
+        onClick = { onClick() }
     ) {
         AsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current)
-                .data(books.book.cover)
+                .data(imageUrl)
                 .crossfade(true)
                 .build(),
             contentDescription = null,
@@ -324,7 +333,7 @@ fun PrintBookCard(books: BookItem, navController: NavController) {
                 .aspectRatio(1.0f)
         )
         Text(
-            text = books.book.title,
+            text = name,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(start = 2.dp)

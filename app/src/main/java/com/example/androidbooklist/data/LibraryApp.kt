@@ -2,10 +2,9 @@ package com.example.androidbooklist.data
 
 import android.app.Application
 import androidx.room.Room
+import kotlin.properties.Delegates
 
 class LibraryApp : Application() {
-
-    lateinit var db: LibraryDatabase
 
     override fun onCreate() {
         super.onCreate()
@@ -15,4 +14,8 @@ class LibraryApp : Application() {
             .build()
     }
 
+    companion object {
+        var db: LibraryDatabase by Delegates.notNull()
+            private set
+    }
 }
