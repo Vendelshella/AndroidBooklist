@@ -15,6 +15,9 @@ interface LibraryDao {
     @Query("SELECT * FROM library")
     suspend fun getAllLibs(): List<Library>
 
+    @Query("SELECT * FROM library WHERE ISBN = :isbn")
+    suspend fun getLibByIsbn(isbn: String): Library?
+
     @Delete
     suspend fun deleteLib(library: Library)
 }
