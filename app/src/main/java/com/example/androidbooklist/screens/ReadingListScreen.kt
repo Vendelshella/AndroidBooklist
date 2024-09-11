@@ -33,6 +33,7 @@ import com.example.androidbooklist.data.Library
 import com.example.androidbooklist.data.LibraryApp
 import com.example.androidbooklist.utils.PrintBookCard
 
+// TODO: ¿animación de carga mientras se trae la información de la BD?
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -14,6 +14,8 @@ import com.example.androidbooklist.utils.MakeGrid
 import com.example.androidbooklist.utils.filterBooks
 import com.example.androidbooklist.data.BooksDataSource
 
+// TODO: ¿Hay alguna de que los filtros se guarden al regresar a la pantalla principal?
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 //@OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,7 +34,6 @@ fun MainScreen (navController: NavController) {
         genre = selectedGenre,
         page = selectedPageNumber
     )
-
     MakeGrid(
         books = filteredBooks,
         selectedGenre = selectedGenre,
