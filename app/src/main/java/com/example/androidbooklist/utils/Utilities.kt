@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,13 +45,6 @@ import coil.request.ImageRequest
 import com.example.androidbooklist.data.BooksData.BookItem
 import com.example.androidbooklist.navigation.AppScreens
 
-
-/******************************************************************************
- * filterBooks(List<BookItem>, String, Int: List<BookItem>
- *
- * Realiza el filtrado doble de la lista para cuando la UI se actualice.
- *
- *****************************************************************************/
 @Composable
 fun filterBooks(books: List<BookItem>, genre: String, page: Int): List<BookItem> {
     val filteredBooks = remember (genre, page) {
@@ -64,12 +58,6 @@ fun filterBooks(books: List<BookItem>, genre: String, page: Int): List<BookItem>
     return filteredBooks
 }
 
-/******************************************************************************
- * MakeGrid(args...)
- *
- * Pinta el grid principal de la UI y llama al resto de Composables
- *
- ******************************************************************************/
 @Composable
 fun MakeGrid(
     books: List<BookItem>,
@@ -90,8 +78,7 @@ fun MakeGrid(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row {
-                ShowMainHeader(bookList = books)
-                ShowLibraryIcon(navController)
+                ShowMainHeader(navController)
             }
             Row(
                 modifier = Modifier.fillMaxWidth()
@@ -121,6 +108,9 @@ fun MakeGrid(
                     )
                 }
             }
+            Row {
+                ShowNumberOfBooks(bookList = books)
+            }
             PrintBooks(
                 bookList = books,
                 navController = navController
@@ -129,44 +119,36 @@ fun MakeGrid(
     }
 }
 
+
 @Composable
-private fun ShowLibraryIcon(navController: NavController) {
-    IconButton(
+private fun ShowMainHeader(navController: NavController) {
+    Button (
         onClick = {
             navController.navigate(
                 route = AppScreens.ReadingListScreen.route
             )
-        }
+        },
+        modifier = Modifier.padding(top = 16.dp)
     ) {
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.List,
-            tint = MaterialTheme.colorScheme.primary,
-            contentDescription = null
+        Text(
+            text = "Mi biblioteca",
+            style = MaterialTheme.typography.headlineLarge,
+            modifier = Modifier.padding(top = 8.dp)
         )
     }
 }
 
-/******************************************************************************
- * ShowMainHeader(List<BookItem>)
- *
- * Muestra un encabezado con el número de libros disponibles
- *
- ******************************************************************************/
 @Composable
-fun ShowMainHeader(bookList: List<BookItem>) {
+fun ShowNumberOfBooks(bookList: List<BookItem>) {
     Text(
         text = "${bookList.size} libros disponibles",
         style = MaterialTheme.typography.headlineLarge,
+        fontStyle = FontStyle.Italic,
         modifier = Modifier.padding(top = 8.dp)
     )
 }
 
-/******************************************************************************
- * ShowFilterHeader(String)
- *
- * Muestra el encabezado del filtrado
- *
- ******************************************************************************/
+
 @Composable
 fun ShowFilterPagesHeader(title: String){
     Text(
@@ -178,12 +160,6 @@ fun ShowFilterPagesHeader(title: String){
     )
 }
 
-/******************************************************************************
- * MakeSlider(List<Int>)
- *
- * Implementa el Slider que filtra por páginas
- *
- ******************************************************************************/
 @Composable
 fun MakeSlider(
     currentPage: Int,
@@ -214,12 +190,6 @@ fun MakeSlider(
 
 }
 
-/******************************************************************************
- * MakeDropdownMenu(String, List<String>, (String) -> Unit)
- *
- * Implementa el DropdownMenu que filtra por géneros
- *
- ******************************************************************************/
 @Composable
 fun MakeDropdownMenu(
     currentGenre: String,
@@ -277,44 +247,42 @@ fun MakeDropdownMenu(
     }
 }
 
-/******************************************************************************
- * PrintBooks(List<BookItem>)
- *
- * Implementa el LazyVerticalGrid que muestra los libros
- *
- ******************************************************************************/
 @Composable
 fun PrintBooks(bookList: List<BookItem>, navController: NavController) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 140.dp),
+        columns = GridCells.Adaptive(minSize = 105.dp),
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 14.dp)
     ) {
         items(bookList.size) { index ->
-            PrintBookCard(books = bookList[index], navController = navController)
+            PrintBookCard(
+                isbn = bookList[index].book.ISBN,
+                title = bookList[index].book.title,
+                cover = bookList[index].book.cover,
+                navController = navController,
+                )
         }
     }
 }
 
-/******************************************************************************
- * PrintBookCard(BookItem)
- *
- * Implementa un elemento Card que contiene la imagen y el titulo del libro
- *
- ******************************************************************************/
 @Composable
-fun PrintBookCard(books: BookItem, navController: NavController) {
+fun PrintBookCard(
+    isbn: String,
+    cover: String,
+    title: String,
+    navController: NavController
+) {
     Card (
         modifier = Modifier.padding(4.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
         ),
-        onClick = { navController.navigate(route = "book_detail_screen/${books.book.ISBN}") }
+        onClick = { navController.navigate(route = "book_detail_screen/${isbn}") }
     ) {
         AsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current)
-                .data(books.book.cover)
+                .data(cover)
                 .crossfade(true)
                 .build(),
             contentDescription = null,
@@ -324,7 +292,7 @@ fun PrintBookCard(books: BookItem, navController: NavController) {
                 .aspectRatio(1.0f)
         )
         Text(
-            text = books.book.title,
+            text = title,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(start = 2.dp)

@@ -1,12 +1,16 @@
 package com.example.androidbooklist.screens
 
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -21,19 +25,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.androidbooklist.data.Library
 import com.example.androidbooklist.data.LibraryApp
+import com.example.androidbooklist.utils.PrintBookCard
 
-
-// TODO: Crear la pantalla de la lista de lectura
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReadingListScreen(
-    //navController: NavController,
+    navController: NavController,
     navigateBack: () -> Unit
 ) {
 
@@ -68,16 +72,34 @@ fun ReadingListScreen(
             modifier = Modifier.padding(it)
         ){
             if (libraryList.isNotEmpty()) {
-                // TODO:
-                //  reescribir PrintBookCard (pasar atributos en vez de objeto)
-                //  en una LazyVerticalGrid
-                LazyColumn {
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(minSize = 140.dp),
+                    modifier = Modifier.fillMaxSize().padding(top = 14.dp)
+                ) {
                     items(libraryList.size) { index ->
-                        Text(text = libraryList[index].title)
+                        PrintBookCard(
+                            title = libraryList[index].title,
+                            isbn = libraryList[index].ISBN,
+                            cover = libraryList[index].cover,
+                            navController = navController
+                        )
                     }
                 }
             } else {
-                Text("No tienes libros guardados en tu biblioteca")
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Warning,
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp)
+                    )
+                    Text(
+                        text = "No tienes libros guardados en tu biblioteca",
+                    )
+                }
             }
         }
     }
