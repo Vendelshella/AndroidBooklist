@@ -1,6 +1,6 @@
 package com.example.androidbooklist.data
 
-// TODO: ¿se puede escribir esta clase de forma más simple?
+// TODO: Reescribir esta clase de forma más simple
 
 class BooksData {
 

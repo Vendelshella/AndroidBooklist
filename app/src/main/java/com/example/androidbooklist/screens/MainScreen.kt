@@ -1,7 +1,6 @@
 package com.example.androidbooklist.screens
 
 import android.annotation.SuppressLint
-//import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -14,10 +13,9 @@ import com.example.androidbooklist.utils.MakeGrid
 import com.example.androidbooklist.utils.filterBooks
 import com.example.androidbooklist.data.BooksDataSource
 
-// TODO: ¿Hay alguna de que los filtros se guarden al regresar a la pantalla principal?
+// TODO: Hacer que los filtros se guarden al regresar a la pantalla principal
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-//@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen (navController: NavController) {
 
