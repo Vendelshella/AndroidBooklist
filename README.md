@@ -16,6 +16,8 @@ Una aplicación realizada en Kotlin con Jetpack Compose, que recupera datos de l
 
 ### Libro añadido a Biblioteca
 El botón cambia su texto en función de si el libro está o no añadido a la Biblioteca
+
+
 <img src="/preview_screenshots/03_added.png" width="200">
 
 ### Vista de la Biblioteca
