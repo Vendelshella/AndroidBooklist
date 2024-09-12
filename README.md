@@ -9,12 +9,13 @@ Una aplicación realizada en Kotlin con Jetpack Compose, que recupera datos de l
 <img src="/preview_screenshots/00_main.png" width="200">
 
 ### Filtrando por género y páginas
-<img src="/preview_screenshots/01_filtered" width="200">
+<img src="/preview_screenshots/01_filtered.png" width="200">
 
 ### Detalle del libro
 <img src="/preview_screenshots/02_detail.png" width="200">
 
 ### Libro añadido a Biblioteca
+El botón cambia su texto en función de si el libro está o no añadido a la Biblioteca
 <img src="/preview_screenshots/03_added.png" width="200">
 
 ### Vista de la Biblioteca
