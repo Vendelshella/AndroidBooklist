@@ -1,4 +1,18 @@
 <resources>
     <string name="app_name">AndroidBooklist</string>
     <string name="data_source">books.json</string>
+    <string name="text_filter_pages">Filtrar por páginas</string>
+    <string name="text_filter_genres">Filtrar por géneros</string>
+    <string name="text_my_library">Mi biblioteca</string>
+    <string name="text_books_available">%1$s libros disponibles</string>
+    <string name="warn_empty_library">No tienes libros guardados en tu biblioteca</string>
+    <string name="title_my_reading_list">Mi lista de lectura</string>
+    <string name="title_book_detail">Detalle del libro</string>
+    <string name="text_detail_author">- Autor: %1$s</string>
+    <string name="text_detail_year">- Año de publicación: %1$s</string>
+    <string name="text_detail_pages">- %1$s páginas</string>
+    <string name="text_detail_isbn">- ISBN: %1$s</string>
+    <string name="text_button_back">Volver</string>
+    <string name="text_button_add">Añadir a biblioteca</string>
+    <string name="text_button_remove">Eliminar de biblioteca</string>
 </resources>

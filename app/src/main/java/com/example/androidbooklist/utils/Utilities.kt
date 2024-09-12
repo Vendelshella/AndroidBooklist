@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.androidbooklist.R
 import com.example.androidbooklist.data.BooksData.BookItem
 import com.example.androidbooklist.navigation.AppScreens
 
@@ -88,7 +90,7 @@ fun MakeGrid(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    ShowFilterPagesHeader("Filtrar por páginas")
+                    ShowFilterPagesHeader(stringResource(R.string.text_filter_pages))
                     MakeSlider(
                         pagesToFilter = pagesFilter,
                         currentPage = selectedPage,
@@ -100,7 +102,7 @@ fun MakeGrid(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    ShowFilterPagesHeader(title = "Filtrar por géneros")
+                    ShowFilterPagesHeader(title = stringResource(R.string.text_filter_genres))
                     MakeDropdownMenu(
                         currentGenre = selectedGenre,
                         genresToFilter = genresFilter,
@@ -131,7 +133,7 @@ private fun ShowMainHeader(navController: NavController) {
         modifier = Modifier.padding(top = 16.dp)
     ) {
         Text(
-            text = "Mi biblioteca",
+            text = stringResource(R.string.text_my_library),
             style = MaterialTheme.typography.headlineLarge,
             modifier = Modifier.padding(top = 8.dp)
         )
@@ -141,7 +143,7 @@ private fun ShowMainHeader(navController: NavController) {
 @Composable
 fun ShowNumberOfBooks(bookList: List<BookItem>) {
     Text(
-        text = "${bookList.size} libros disponibles",
+        text = stringResource(R.string.text_books_available, bookList.size),
         style = MaterialTheme.typography.headlineLarge,
         fontStyle = FontStyle.Italic,
         modifier = Modifier.padding(top = 8.dp)

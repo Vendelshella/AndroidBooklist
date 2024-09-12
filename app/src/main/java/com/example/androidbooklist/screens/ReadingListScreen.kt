@@ -27,8 +27,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.androidbooklist.R
 import com.example.androidbooklist.data.Library
 import com.example.androidbooklist.data.LibraryApp
 import com.example.androidbooklist.utils.PrintBookCard
@@ -56,7 +58,7 @@ fun ReadingListScreen(
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = {
-                    Text("Mi lista de lectura")
+                    Text(stringResource(R.string.title_my_reading_list))
                 },
                 navigationIcon = {
                     IconButton(onClick = navigateBack) {
@@ -75,7 +77,9 @@ fun ReadingListScreen(
             if (libraryList.isNotEmpty()) {
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(minSize = 140.dp),
-                    modifier = Modifier.fillMaxSize().padding(top = 14.dp)
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 14.dp)
                 ) {
                     items(libraryList.size) { index ->
                         PrintBookCard(
@@ -98,7 +102,7 @@ fun ReadingListScreen(
                         modifier = Modifier.size(48.dp)
                     )
                     Text(
-                        text = "No tienes libros guardados en tu biblioteca",
+                        text = stringResource(R.string.warn_empty_library),
                     )
                 }
             }

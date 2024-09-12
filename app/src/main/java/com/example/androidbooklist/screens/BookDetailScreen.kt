@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.androidbooklist.R
 import com.example.androidbooklist.data.BooksDataSource
 import com.example.androidbooklist.data.Library
 import com.example.androidbooklist.data.LibraryApp
@@ -74,7 +76,7 @@ fun BookDetailScreen(
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = {
-                    Text(text = "Detalle del libro")
+                    Text(text = stringResource(R.string.title_book_detail))
                 },
                 navigationIcon = {
                     IconButton(onClick = navigateBack) {
@@ -122,13 +124,25 @@ fun BookDetailScreen(
                 }
                 Column(modifier = Modifier.weight(1f)){
                     Column{
-                        Text(text = "- Autor: ${thisBook.book.author.name}", style = MaterialTheme.typography.labelLarge)
+                        Text(text = stringResource(
+                            R.string.text_detail_author,
+                            thisBook.book.author.name
+                        ), style = MaterialTheme.typography.labelLarge)
                         Spacer(modifier = Modifier.padding(top = 8.dp))
-                        Text(text = "- Año de publicación: ${thisBook.book.year}", style = MaterialTheme.typography.labelLarge)
+                        Text(text = stringResource(
+                            R.string.text_detail_year,
+                            thisBook.book.year
+                        ), style = MaterialTheme.typography.labelLarge)
                         Spacer(modifier = Modifier.padding(top = 8.dp))
-                        Text(text = "- ${thisBook.book.pages} páginas", style = MaterialTheme.typography.labelLarge)
+                        Text(text = stringResource(
+                            R.string.text_detail_pages,
+                            thisBook.book.pages
+                        ), style = MaterialTheme.typography.labelLarge)
                         Spacer(modifier = Modifier.padding(top = 8.dp))
-                        Text(text = "- ISBN: ${thisBook.book.ISBN}", style = MaterialTheme.typography.labelLarge)
+                        Text(text = stringResource(
+                            R.string.text_detail_isbn,
+                            thisBook.book.ISBN
+                        ), style = MaterialTheme.typography.labelLarge)
                     }
                 }
             }
@@ -138,7 +152,7 @@ fun BookDetailScreen(
                     onClick = { navController.popBackStack() },
                     shape = RectangleShape
                 ) {
-                    Text(text = "Volver")
+                    Text(text = stringResource(R.string.text_button_back))
                 }
                 Spacer(modifier = Modifier.padding(start = 32.dp))
 
@@ -163,7 +177,10 @@ fun BookDetailScreen(
                     } },
                     modifier = Modifier.background(MaterialTheme.colorScheme.primary)
                 ) {
-                    Text(text = if (!isAdded) "Añadir a biblioteca" else "Eliminar de biblioteca")
+                    Text(text = if (!isAdded) stringResource(
+                        R.string.text_button_add) else stringResource(
+                        R.string.text_button_remove)
+                    )
                 }
             }
         }
