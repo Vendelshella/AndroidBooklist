@@ -41,7 +41,8 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.androidbooklist.R
-import com.example.androidbooklist.data.BooksDataSource
+import com.example.androidbooklist.data.AssetsBooksDataSource
+import com.example.androidbooklist.data.BooksRepository
 import com.example.androidbooklist.data.Library
 import com.example.androidbooklist.data.LibraryApp
 import kotlinx.coroutines.launch
@@ -55,13 +56,12 @@ fun BookDetailScreen(
     navigateBack: () -> Unit
 ){
     val context = LocalContext.current
+    val repository = remember { BooksRepository.create(context.applicationContext) }
+
     val coroutineScope = rememberCoroutineScope()
     val database = remember { LibraryApp.db.libraryDao() }
 
-    val thisBook = remember {
-        BooksDataSource.getBook(context = context, isbn = isbn)
-    }
-
+    val thisBook = remember { repository.getBook(isbn = isbn) }
     var isAdded by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -96,7 +96,7 @@ fun BookDetailScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = thisBook.book.title,
+                text = thisBook.title,
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
@@ -104,7 +104,7 @@ fun BookDetailScreen(
             Spacer(modifier = Modifier.padding(top = 32.dp))
             Text(
                 modifier = Modifier.padding(start = 16.dp),
-                text = thisBook.book.synopsis,
+                text = thisBook.synopsis,
                 fontStyle = FontStyle.Italic
             )
             Spacer(modifier = Modifier.padding(top = 48.dp))
@@ -112,7 +112,7 @@ fun BookDetailScreen(
                 Column(modifier = Modifier.weight(1f)){
                     AsyncImage(
                         model = ImageRequest.Builder(context = LocalContext.current)
-                            .data(thisBook.book.cover)
+                            .data(thisBook.cover)
                             .crossfade(true)
                             .build(),
                         contentDescription = null,
@@ -126,22 +126,22 @@ fun BookDetailScreen(
                     Column{
                         Text(text = stringResource(
                             R.string.text_detail_author,
-                            thisBook.book.author.name
+                            thisBook.author
                         ), style = MaterialTheme.typography.labelLarge)
                         Spacer(modifier = Modifier.padding(top = 8.dp))
                         Text(text = stringResource(
                             R.string.text_detail_year,
-                            thisBook.book.year
+                            thisBook.year
                         ), style = MaterialTheme.typography.labelLarge)
                         Spacer(modifier = Modifier.padding(top = 8.dp))
                         Text(text = stringResource(
                             R.string.text_detail_pages,
-                            thisBook.book.pages
+                            thisBook.pages
                         ), style = MaterialTheme.typography.labelLarge)
                         Spacer(modifier = Modifier.padding(top = 8.dp))
                         Text(text = stringResource(
                             R.string.text_detail_isbn,
-                            thisBook.book.ISBN
+                            thisBook.ISBN
                         ), style = MaterialTheme.typography.labelLarge)
                     }
                 }
@@ -161,12 +161,13 @@ fun BookDetailScreen(
                     onClick = { coroutineScope.launch {
                         val candidate = database.getLibByIsbn(isbn = isbn)
                         isAdded = if (candidate == null) {
+//                            repository.add(thisBook)
                             database.insertLib(
                                 Library(
-                                title = thisBook.book.title,
-                                author = thisBook.book.author.name,
-                                ISBN = thisBook.book.ISBN,
-                                cover = thisBook.book.cover
+                                title = thisBook.title,
+                                author = thisBook.author,
+                                ISBN = thisBook.ISBN,
+                                cover = thisBook.cover
                                 )
                             )
                             true

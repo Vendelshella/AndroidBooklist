@@ -44,13 +44,13 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.androidbooklist.R
-import com.example.androidbooklist.data.BooksData.BookItem
+import com.example.androidbooklist.data.Book
 import com.example.androidbooklist.navigation.AppScreens
 
 
 @Composable
 fun MakeGrid(
-    books: List<BookItem>,
+    books: List<Book>,
     selectedGenre: String,
     genresFilter: List<String>,
     onGenreSelected: (String) -> Unit,
@@ -67,9 +67,7 @@ fun MakeGrid(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row {
-                ShowMainHeader(navController)
-            }
+            ShowMainHeader(navController)
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -78,8 +76,8 @@ fun MakeGrid(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    ShowFilterPagesHeader(stringResource(R.string.text_filter_pages))
-                    MakeSlider(
+                    FilterPagesHeader(stringResource(R.string.text_filter_pages))
+                    PageSlider(
                         pagesToFilter = pagesFilter,
                         currentPage = selectedPage,
                         onPageSelected = onPageSelected
@@ -90,17 +88,15 @@ fun MakeGrid(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    ShowFilterPagesHeader(title = stringResource(R.string.text_filter_genres))
-                    MakeDropdownMenu(
+                    FilterPagesHeader(title = stringResource(R.string.text_filter_genres))
+                    GenreDropdownMenu(
                         currentGenre = selectedGenre,
                         genresToFilter = genresFilter,
                         onGenreSelected = onGenreSelected
                     )
                 }
             }
-            Row {
-                ShowNumberOfBooks(bookList = books)
-            }
+            NumberOfBooks(bookList = books)
             PrintBooks(
                 bookList = books,
                 navController = navController
@@ -129,7 +125,7 @@ private fun ShowMainHeader(navController: NavController) {
 }
 
 @Composable
-fun ShowNumberOfBooks(bookList: List<BookItem>) {
+fun NumberOfBooks(bookList: List<Book>) {
     Text(
         text = stringResource(R.string.text_books_available, bookList.size),
         style = MaterialTheme.typography.headlineLarge,
@@ -140,7 +136,7 @@ fun ShowNumberOfBooks(bookList: List<BookItem>) {
 
 
 @Composable
-fun ShowFilterPagesHeader(title: String){
+fun FilterPagesHeader(title: String){
     Text(
         text = title,
         modifier = Modifier
@@ -151,7 +147,7 @@ fun ShowFilterPagesHeader(title: String){
 }
 
 @Composable
-fun MakeSlider(
+fun PageSlider(
     currentPage: Int,
     pagesToFilter:List<Int>,
     onPageSelected: (Int) -> Unit) {
@@ -181,7 +177,7 @@ fun MakeSlider(
 }
 
 @Composable
-fun MakeDropdownMenu(
+fun GenreDropdownMenu(
     currentGenre: String,
     genresToFilter: List<String>,
     onGenreSelected: (String) -> Unit
@@ -238,7 +234,7 @@ fun MakeDropdownMenu(
 }
 
 @Composable
-fun PrintBooks(bookList: List<BookItem>, navController: NavController) {
+fun PrintBooks(bookList: List<Book>, navController: NavController) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 105.dp),
         modifier = Modifier
@@ -247,9 +243,9 @@ fun PrintBooks(bookList: List<BookItem>, navController: NavController) {
     ) {
         items(bookList.size) { index ->
             PrintBookCard(
-                isbn = bookList[index].book.ISBN,
-                title = bookList[index].book.title,
-                cover = bookList[index].book.cover,
+                isbn = bookList[index].ISBN,
+                title = bookList[index].title,
+                cover = bookList[index].cover,
                 navController = navController,
                 )
         }

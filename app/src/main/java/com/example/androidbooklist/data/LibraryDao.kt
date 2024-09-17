@@ -20,4 +20,7 @@ interface LibraryDao {
 
     @Delete
     suspend fun deleteLib(library: Library)
+
+    @Query("DELETE FROM library WHERE ISBN = :isbn")
+    suspend fun deleteLib(isbn: String)
 }

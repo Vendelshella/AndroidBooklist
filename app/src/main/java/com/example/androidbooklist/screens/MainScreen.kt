@@ -12,7 +12,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.example.androidbooklist.utils.MakeGrid
-import com.example.androidbooklist.data.BooksDataSource
+import com.example.androidbooklist.data.AssetsBooksDataSource
+import com.example.androidbooklist.data.BooksRepository
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -21,12 +22,14 @@ fun MainScreen (navController: NavController) {
 
     // MUY IMPORTANTE: usar remember para que no haga falta volver a leer el JSON con cada cambio.
     val context = LocalContext.current
-    val booksList = remember { BooksDataSource.readBooks(context = context) }
+    val repository = remember { BooksRepository.create(context.applicationContext) }
 
-    val pagesFilter = remember { booksList.map { it.book.pages }.sorted() }
+    val booksList = remember { repository.getAll() }
+
+    val pagesFilter = remember { booksList.map { it.pages }.sorted() }
     var selectedPageNumber by rememberSaveable { mutableIntStateOf(pagesFilter.last()) }
 
-    val genresFilter = remember { booksList.map { it.book.genre }.distinct() }
+    val genresFilter = remember { booksList.map { it.genre }.distinct() }
     var selectedGenre by rememberSaveable { mutableStateOf("") }
 
     // ProduceState permite hacer operaciones asíncronas en base al cambio de las keys
@@ -42,8 +45,8 @@ fun MainScreen (navController: NavController) {
             if (selectedGenre.isEmpty())
                 true
             else
-                it.book.genre == selectedGenre
-        }.filter { it.book.pages <= selectedPageNumber }
+                it.genre == selectedGenre
+        }.filter { it.pages <= selectedPageNumber }
     }
 
     MakeGrid(
