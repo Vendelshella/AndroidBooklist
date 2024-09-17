@@ -47,18 +47,6 @@ import com.example.androidbooklist.R
 import com.example.androidbooklist.data.BooksData.BookItem
 import com.example.androidbooklist.navigation.AppScreens
 
-@Composable
-fun filterBooks(books: List<BookItem>, genre: String, page: Int): List<BookItem> {
-    val filteredBooks = remember (genre, page) {
-        books.filter {
-            if (genre.isEmpty())
-                true
-            else
-                it.book.genre == genre
-        }.filter { it.book.pages <= page }
-    }
-    return filteredBooks
-}
 
 @Composable
 fun MakeGrid(
