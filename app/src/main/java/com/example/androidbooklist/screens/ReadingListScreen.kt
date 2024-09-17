@@ -23,19 +23,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.androidbooklist.R
-import com.example.androidbooklist.data.Library
-import com.example.androidbooklist.data.LibraryApp
+import com.example.androidbooklist.data.Book
+import com.example.androidbooklist.data.BooksRepository
 import com.example.androidbooklist.utils.PrintBookCard
 
-// TODO: animación mientras carga la información de la BD por si tarda tiempo
+// TODO: animación mientras carga la información de la BD por si tardase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,10 +46,16 @@ fun ReadingListScreen(
     navigateBack: () -> Unit
 ) {
 
-    var libraryList by remember { mutableStateOf(emptyList<Library>()) }
+    val context = LocalContext.current
+    val repository = remember { BooksRepository.create(context.applicationContext) }
+
+    val libraryList by produceState(emptyList<Book>()) {
+        value = repository.getAllRead()
+    }
 
     LaunchedEffect(Unit) {
-        libraryList = LibraryApp.db.libraryDao().getAllLibs()
+//        libraryList = LibraryApp.db.libraryDao().getAllLibs()
+        repository.getAll()
     }
 
     Scaffold(

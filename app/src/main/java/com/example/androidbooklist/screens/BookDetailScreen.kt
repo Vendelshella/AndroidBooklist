@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -41,10 +42,9 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.androidbooklist.R
-import com.example.androidbooklist.data.AssetsBooksDataSource
+import com.example.androidbooklist.data.Book
 import com.example.androidbooklist.data.BooksRepository
-import com.example.androidbooklist.data.Library
-import com.example.androidbooklist.data.LibraryApp
+
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,13 +59,16 @@ fun BookDetailScreen(
     val repository = remember { BooksRepository.create(context.applicationContext) }
 
     val coroutineScope = rememberCoroutineScope()
-    val database = remember { LibraryApp.db.libraryDao() }
+
+//    val libraryList by produceState(emptyList<Book>()) {
+//        value = repository.getAllRead()
+//    }
 
     val thisBook = remember { repository.getBook(isbn = isbn) }
     var isAdded by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        isAdded = database.getLibByIsbn(isbn = isbn) != null
+        isAdded = repository.getBook(isbn = isbn) != null
     }
 
     Scaffold(
@@ -159,20 +162,13 @@ fun BookDetailScreen(
 
                 Button(
                     onClick = { coroutineScope.launch {
-                        val candidate = database.getLibByIsbn(isbn = isbn)
+                        val candidate = repository.getBook(isbn = isbn)
                         isAdded = if (candidate == null) {
-//                            repository.add(thisBook)
-                            database.insertLib(
-                                Library(
-                                title = thisBook.title,
-                                author = thisBook.author,
-                                ISBN = thisBook.ISBN,
-                                cover = thisBook.cover
-                                )
-                            )
+                            repository.add(thisBook)
+
                             true
                         } else {
-                            database.deleteLib(candidate)
+                            repository.delete(candidate)
                             false
                         }
                     } },
