@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
@@ -13,19 +14,20 @@ import com.example.androidbooklist.utils.MakeGrid
 import com.example.androidbooklist.utils.filterBooks
 import com.example.androidbooklist.data.BooksDataSource
 
-// TODO: Hacer que los filtros se guarden al regresar a la pantalla principal
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainScreen (navController: NavController) {
 
-    val booksList = BooksDataSource.readBooks(context = LocalContext.current)
+    // MUY IMPORTANTE: usar remember para que no haga falta volver a leer el JSON con cada cambio.
+    val context = LocalContext.current
+    val booksList = remember { BooksDataSource.readBooks(context = context) }
 
     val pagesFilter = remember { booksList.map { it.book.pages }.sorted() }
-    var selectedPageNumber by remember { mutableIntStateOf(pagesFilter.last()) }
+    var selectedPageNumber by rememberSaveable { mutableIntStateOf(pagesFilter.last()) }
 
     val genresFilter = remember { booksList.map { it.book.genre }.distinct() }
-    var selectedGenre by remember { mutableStateOf("") }
+    var selectedGenre by rememberSaveable { mutableStateOf("") }
 
     val filteredBooks = filterBooks(
         books = booksList,
